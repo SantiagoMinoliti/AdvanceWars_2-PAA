@@ -28,14 +28,17 @@ public:
 	// UPROPERTY(BlueprintAssignable)
 	// FOnReset OnResetEvent;
 		
-	UPROPERTY(Transient)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Field Config")
 	int32 Size;
 	
-	UPROPERTY(Transient)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Field Config")
 	float TileSize;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<ATile> TileClass;
+	TSubclassOf<ATile> TileClass_Odd;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ATile> TileClass_Even;
 
 	virtual void OnConstruction(const FTransform& Transform) override;
 

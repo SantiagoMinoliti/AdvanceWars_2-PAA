@@ -10,7 +10,7 @@ AGameField::AGameField() {
 	PrimaryActorTick.bCanEverTick = false;
 	
 	Size = 25;
-	TileSize = 1.5f;
+	TileSize = 150.0f;
 }
 
 void AGameField::OnConstruction(const FTransform& Transform) {
@@ -25,7 +25,12 @@ void AGameField::GenerateField() {
 	for (int32 i = 0; i < Size; i++) {
 		for (int32 j = 0; j < Size; j++) {
 			FVector Location = AGameField::GetRelativeLocationByXYPosition(i, j);
-			ATile* Obj = GetWorld()->SpawnActor<ATile>(TileClass, Location, FRotator::ZeroRotator);
+			ATile* Obj;
+			if((i + j) % 2 == 0) {
+				Obj = GetWorld()->SpawnActor<ATile>(TileClass_Odd, Location, FRotator::ZeroRotator);
+			} else {
+				Obj = GetWorld()->SpawnActor<ATile>(TileClass_Even, Location, FRotator::ZeroRotator);
+			}
 			const float TileScale = TileSize / 100;
 			Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
 			Obj->SetPosition(i, j);
@@ -51,5 +56,6 @@ FVector2D AGameField::GetXYPositionByRelativeLocation(const FVector& Location) c
 void AGameField::BeginPlay()
 {
 	Super::BeginPlay();
+	UE_LOG(LogTemp, Warning, TEXT("AGameField::BeginPlay() called!"));
 	GenerateField();
 }
