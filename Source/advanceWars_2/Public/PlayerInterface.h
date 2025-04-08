@@ -32,8 +32,8 @@ public:
 	int32 PlayerNumber;
 	ETeam Turn;
 
-	virtual void onTurn() {};
-	virtual void onWin() {};
-	virtual void onLose() {};
+	virtual void OnTurn() {};
+	virtual void OnWin() {};
+	virtual void OnLose() {};
 
 };
