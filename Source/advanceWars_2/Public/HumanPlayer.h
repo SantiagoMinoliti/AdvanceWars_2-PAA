@@ -11,7 +11,7 @@
 #include "HumanPlayer.generated.h"
 
 UCLASS()
-class ADVANCEWARS_2_API AHumanPlayer : public APawn, IPlayerInterface
+class ADVANCEWARS_2_API AHumanPlayer : public APawn, public IPlayerInterface
 {
 	GENERATED_BODY()
 
@@ -19,7 +19,7 @@ public:
 	// Sets default values for this pawn's properties
 	AHumanPlayer();
 
-	UCameraComponent* camera;
+	UCameraComponent* Camera;
 
 	//UAW_GameInstance* GameInstance;
 
@@ -41,5 +41,5 @@ public:
 	virtual void OnLose() override;
 
 	UFUNCTION()
-    void OnClick
+    void OnClick();
 };

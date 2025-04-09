@@ -5,8 +5,8 @@
 #include "GameField.h"
 //#include "AW_GameMode.h"
 #include "Components/InputComponent.h"
-//#include "EnhancedInputComponent.h"
-//#include "EnhancedInputSubsystems.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
 
 // Sets default values
 AHumanPlayer::AHumanPlayer()
@@ -14,7 +14,7 @@ AHumanPlayer::AHumanPlayer()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	AutoPossessPlayer = EAutoRecieveInput::Player0;
+	AutoPossessPlayer = EAutoReceiveInput::Player0;
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 
@@ -48,7 +48,7 @@ void AHumanPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 }
 
 void AHumanPlayer::OnTurn() {
-	isMyTurn = true;
+	IsMyTurn = true;
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, "Your Turn");
 	//GameInstance->SetTurnMessage(TEXT("Human Turn"));
 }
@@ -71,10 +71,11 @@ void AHumanPlayer::OnClick() {
 	FHitResult Hit = FHitResult(ForceInit);
 
 	GetWorld()->GetFirstPlayerController()->GetHitResultUnderCursor(ECollisionChannel::ECC_Pawn, true, Hit);
-	if(Hit.bBlockingHit && isMyTurn) {
+	if(Hit.bBlockingHit && IsMyTurn) {
 		if(ATile* CurrTile = Cast<ATile>(Hit.GetActor())) { // Logica di controllo, per ora placeholder: piazza tutti Santa
-			if(CurrTile->SetTileStatus(PlayerNumber == ETileStatus::EMPTY) {
-				CurrTile->SetTileStatus(PlayerNumber, ETileStatus::SANTA);
+			if(CurrTile->GetStatus() == ETileStatus::EMPTY) {
+				CurrTile->SetStatus(ETileStatus::SANTA);
+				IsMyTurn = false;
 			}
 		}
 	}
