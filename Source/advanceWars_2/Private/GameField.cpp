@@ -59,7 +59,7 @@ ATile* AGameField::GetRandomEmptyTile()
 	return EmptyTiles[FMath::Rand() % EmptyTiles.Num()];
 }
 
-TArray<ATile*> AGameField::GetReachableTiles(ATile* DepartureTile)
+TArray<ATile*> AGameField::GetReachableTiles(ATile* DepartureTile, int32 TileDistance, bool bIgnoreObstacles)
 {
 	TArray<ATile*> ReachableTiles;
 	// TODO

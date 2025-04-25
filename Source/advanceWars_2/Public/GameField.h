@@ -55,7 +55,7 @@ public:
 
 	ATile* GetRandomEmptyTile();
 	
-	TArray<ATile*> GetReachableTiles(ATile* DepartureTile);
+	TArray<ATile*> GetReachableTiles(ATile* DepartureTile, int32 TileDistance, bool bIgnoreObstacles);
 
 	
 

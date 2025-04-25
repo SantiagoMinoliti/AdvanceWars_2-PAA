@@ -75,7 +75,13 @@ public:
 
 	void SetStandingTile(ATile* Tile);
 	
+	TArray<ATile*> GetReachableTiles();
+	
 	void Move(ATile* Tile);
+
+	TArray<ATile*> GetAttackOptions();
+
+	void Attack(ATile* Tile);
 
 	// TODO: tutte le funzioni
 };

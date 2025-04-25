@@ -100,10 +100,48 @@ void ABaseCharacter::SetStandingTile(ATile* Tile)
 	StandingTile = Tile;
 }
 
+TArray<ATile*> ABaseCharacter::GetReachableTiles()
+{
+	return GameMode->GField->GetReachableTiles(StandingTile, TileSpeed, false);
+}
+
 void ABaseCharacter::Move(ATile* SelectedTile)
 {
 	GameMode->MoveCharacter(this, SelectedTile);
 	FVector2D TargetLocation = SelectedTile->GetPosition();
 	SetActorLocation(FVector(TargetLocation.X, TargetLocation.Y, 0));
 }
+
+
+TArray<ATile*> ABaseCharacter::GetAttackOptions()
+{
+	TArray<ATile*> ReachableTiles = GameMode->GField->GetReachableTiles(StandingTile, TileRange, CharacterType == ECharacterType::SNIPER);
+	ETileStatus OpponentBrawler, OpponentSniper;
+	ETileStatus CorrespondingTileStatus = GetCorrespondingTileStatus();
+	if (CorrespondingTileStatus == ETileStatus::SANTA || CorrespondingTileStatus == ETileStatus::BERNARD)
+	{
+		OpponentBrawler = ETileStatus::GRINCH;
+		OpponentSniper = ETileStatus::MAX;
+	} else if (CorrespondingTileStatus == ETileStatus::GRINCH || CorrespondingTileStatus == ETileStatus::MAX)
+	{
+		OpponentBrawler = ETileStatus::SANTA;
+		OpponentSniper = ETileStatus::BERNARD;
+	}
+	TArray<ATile*> AttackOptions;
+	for (ATile* ReachableTile : ReachableTiles)
+	{
+		ETileStatus ReachableTileStatus = ReachableTile->GetStatus();
+		if (ReachableTileStatus == OpponentBrawler || ReachableTileStatus == OpponentSniper)
+		{
+			AttackOptions.Add(ReachableTile);
+		}
+	}
+	return AttackOptions;
+}
+
+void ABaseCharacter::Attack(ATile* Tile)
+{
+	
+}
+
 

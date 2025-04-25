@@ -83,7 +83,7 @@ void ARandomPlayer::OnTurn() {
 	for (auto& CurrCharacter : Characters) {
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
 		{
-			TArray<ATile*> Tiles = GameMode->GField->GetReachableTiles(CurrCharacter->StandingTile);
+			TArray<ATile*> Tiles = CurrCharacter->GetReachableTiles();
 			if (Tiles.Num() > 0)
 			{
 				int32 RandIdx = FMath::Rand() % Tiles.Num();
@@ -91,9 +91,15 @@ void ARandomPlayer::OnTurn() {
 
 				CurrCharacter->Move(SelectedTile);
 			}
-    	
+			TArray<ATile*> AttackOptions = CurrCharacter->GetAttackOptions();
+			if (FMath::Rand() % 4 != 0 && AttackOptions.Num() > 0)
+			{
+				CurrCharacter->Attack(AttackOptions[FMath::Rand() % AttackOptions.Num()]);
+			}
+			
 		}, 3.f, false);
 	}
+	
 	
 }
 
