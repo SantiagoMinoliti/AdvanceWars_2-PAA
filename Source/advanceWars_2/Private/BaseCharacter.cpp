@@ -90,6 +90,16 @@ bool ABaseCharacter::IsAlive()
 	return Health > 0;
 }
 
+float ABaseCharacter::GetHealth()
+{
+	return Health;
+}
+
+void ABaseCharacter::SetHealth(float NewHealth)
+{
+	Health = NewHealth;
+}
+
 ATile* ABaseCharacter::GetStandingTile() const
 {
 	return StandingTile;
@@ -141,7 +151,14 @@ TArray<ATile*> ABaseCharacter::GetAttackOptions()
 
 void ABaseCharacter::Attack(ATile* Tile)
 {
-	
+	float Damage = CalculateDamage();
+	GameMode->InflictDamage(Tile, Damage);
+}
+
+float ABaseCharacter::CalculateDamage()
+{
+	float Damage = (FMath::Rand() * (MaxDamage - MinDamage) + MinDamage) * (-1);
+	return Damage;
 }
 
 

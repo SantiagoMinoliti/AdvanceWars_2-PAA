@@ -41,10 +41,6 @@ void AAW_GameMode::ChoosePlayerAndStartGame()
 {
 }
 
-void AAW_GameMode::SetTileStatus(ETileStatus status, const FVector& Pos)
-{
-}
-
 EPlayer AAW_GameMode::GetPlayerEncodeByPlayerNumber(int32 PlayerNumber)
 {
 	switch (PlayerNumber)
@@ -117,7 +113,7 @@ void AAW_GameMode::TurnNextPlayer()
 TArray<ABaseCharacter*> AAW_GameMode::GetCurrentPlayerCharacters()
 {
 	TArray<ABaseCharacter*> Chars;
-	for (ABaseCharacter* Char : Characters)
+	for (ABaseCharacter* Char : AliveCharacters)
 	{
 		if (Char->IsHumanPlayerCharacter() && CurrentPlayer == EPlayer::HUMAN || !Char->IsHumanPlayerCharacter() && CurrentPlayer == EPlayer::CPU)
 		{
@@ -125,6 +121,46 @@ TArray<ABaseCharacter*> AAW_GameMode::GetCurrentPlayerCharacters()
 		}
 	}
 	return Chars;
+}
+
+ECharacterId AAW_GameMode::GetCharacterIdByTileStatus(ETileStatus TileStatus)
+{
+	switch (TileStatus)
+	{
+	case ETileStatus::SANTA:
+		return ECharacterId::SANTA;
+	case ETileStatus::BERNARD:
+		return ECharacterId::BERNARD;
+	case ETileStatus::GRINCH:
+		return ECharacterId::GRINCH;
+	case ETileStatus::MAX:
+		return ECharacterId::MAX;
+	default:
+		return ECharacterId::SANTA;
+	}
+}
+
+ETileStatus AAW_GameMode::GetTileStatusByCharacterId(ECharacterId CharacterId)
+{
+	switch (CharacterId)
+	{
+	case ECharacterId::SANTA:
+		return ETileStatus::SANTA;
+	case ECharacterId::BERNARD:
+		return ETileStatus::BERNARD;
+	case ECharacterId::GRINCH:
+		return ETileStatus::GRINCH;
+	case ECharacterId::MAX:
+		return ETileStatus::MAX;
+	default:
+		return ETileStatus::SANTA;
+	}
+}
+
+ABaseCharacter* AAW_GameMode::GetCharacterByCharacterId(ECharacterId CharacterId)
+{
+	for (ABaseCharacter* Character : AliveCharacters) if (Character->GetCharacterId() == CharacterId) return Character;
+	return nullptr;
 }
 
 TArray<ABaseCharacter*> AAW_GameMode::GetCurrentPlayerAliveCharacters()
@@ -145,6 +181,7 @@ void AAW_GameMode::SpawnCharacter(ECharacterId CharacterId, ATile* SelectedTile)
 	ABaseCharacter* Char = GetWorld()->SpawnActor<ABaseCharacter>(GetSubclassByCharacterId(CharacterId), FVector(Location.X, Location.Y, 0), FRotator::ZeroRotator);
 	SelectedTile->SetStatus(Char->GetCorrespondingTileStatus());
 	Char->SetStandingTile(SelectedTile);
+	AliveCharacters.Add(Char);
 }
 
 void AAW_GameMode::MoveCharacter(ABaseCharacter* Char, ATile* SelectedTile)
@@ -152,5 +189,37 @@ void AAW_GameMode::MoveCharacter(ABaseCharacter* Char, ATile* SelectedTile)
 	Char->GetStandingTile()->SetStatus(ETileStatus::EMPTY);
 	SelectedTile->SetStatus(Char->GetCorrespondingTileStatus());
 	Char->SetStandingTile(SelectedTile);
-	
+}
+
+void AAW_GameMode::InflictDamage(ATile* Tile, float Damage)
+{
+	ETileStatus TileStatus = Tile->GetStatus();
+	ABaseCharacter* Char = GetCharacterByCharacterId(GetCharacterIdByTileStatus(TileStatus));
+	float CurrentHealth = Char->GetHealth();
+	float NewHealth = CurrentHealth + Damage;
+	if(NewHealth < 0) NewHealth = 0;
+	Char->SetHealth(NewHealth);
+	if (NewHealth < 0) {
+		AliveCharacters.Remove(Char);
+		Char->SelfDestroy();
+	}
+	CheckWinConditions();
+}
+
+void AAW_GameMode::CheckWinConditions()
+{
+	bool bSantaTeamAlive, bGrinchTeamAlive = false;
+	for (ABaseCharacter* Char : AliveCharacters)
+	{
+		if (Char->CharacterId == ECharacterId::SANTA || Char->CharacterId == ECharacterId::BERNARD) bSantaTeamAlive = true;
+		else if (Char->CharacterId == ECharacterId::GRINCH || Char->CharacterId == ECharacterId::MAX) bGrinchTeamAlive = true;
+	}
+	if (bSantaTeamAlive && !bGrinchTeamAlive)
+	{
+		// TODO: on win Santa
+	}
+	else if (!bSantaTeamAlive && bGrinchTeamAlive)
+	{
+		// TODO: on win Grinch
+	}
 }

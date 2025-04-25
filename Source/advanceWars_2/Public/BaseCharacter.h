@@ -70,6 +70,9 @@ public:
 
 	bool IsAlive();
 
+	float GetHealth();
+
+	void SetHealth(float NewHealth);
 
 	ATile* GetStandingTile() const;
 
@@ -82,6 +85,8 @@ public:
 	TArray<ATile*> GetAttackOptions();
 
 	void Attack(ATile* Tile);
+
+	float CalculateDamage();
 
 	// TODO: tutte le funzioni
 };

@@ -7,9 +7,9 @@
 #include "PlayerInterface.generated.h"
 
 UENUM()
-enum class ETeam : uint8 {
-	Santa,
-	Grinch,
+enum class ETeam : uint32 {
+	SANTA,
+	GRINCH,
 	None
 };
 

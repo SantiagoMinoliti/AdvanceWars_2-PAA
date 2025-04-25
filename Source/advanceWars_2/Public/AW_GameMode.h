@@ -12,7 +12,7 @@
 class ABaseCharacter;
 
 UENUM()
-enum class ECharacterId : uint8
+enum class ECharacterId : uint32
 {
 	SANTA,
 	BERNARD,
@@ -21,7 +21,7 @@ enum class ECharacterId : uint8
 };
 
 UENUM()
-enum class ECharacterType : uint8
+enum class ECharacterType : uint32
 {
 	BRAWLER,
 	SNIPER
@@ -46,12 +46,10 @@ public:
 	bool IsGameOver;
 
 	TArray<IPlayerInterface*> Players;
-
+	
 	EPlayer CurrentPlayer;
 
 	int32 MoveCounter;
-
-	TArray<ABaseCharacter*> Characters;
 	
 	TArray<ABaseCharacter*> AliveCharacters;
 	
@@ -93,6 +91,12 @@ public:
 
 	TSubclassOf<AActor> GetSubclassByCharacterId(ECharacterId Id);
 
+	ECharacterId GetCharacterIdByTileStatus(ETileStatus TileStatus);
+
+	ETileStatus GetTileStatusByCharacterId(ECharacterId CharacterId);
+
+	ABaseCharacter* GetCharacterByCharacterId(ECharacterId CharacterId);
+
 	int32 GetNextPlayer(int32 Player);
 
 	void TurnNextPlayer();
@@ -104,7 +108,9 @@ public:
     void SpawnCharacter(ECharacterId CharacterId, ATile* SelectedTile);
 
 	void MoveCharacter(ABaseCharacter* Char, ATile* SelectedTile);
+
+	void InflictDamage(ATile* Tile, float Damage);
 	
-	
+	void CheckWinConditions();
 	
 };
