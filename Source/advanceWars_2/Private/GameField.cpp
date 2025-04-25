@@ -24,7 +24,7 @@ void AGameField::ResetField() {
 void AGameField::GenerateField() {
 	for (int32 i = 0; i < Size; i++) {
 		for (int32 j = 0; j < Size; j++) {
-			FVector Location = AGameField::GetRelativeLocationByXYPosition(i, j);
+			FVector Location = GetRelativeLocationByXYPosition(i, j);
 			ATile* Obj;
 			if((i + j) % 2 == 0) {
 				Obj = GetWorld()->SpawnActor<ATile>(TileClass_Odd, Location, FRotator::ZeroRotator);
@@ -52,6 +52,20 @@ FVector2D AGameField::GetXYPositionByRelativeLocation(const FVector& Location) c
 	return FVector2D(Location[0], Location[1]) / TileSize;
 }
 
+ATile* AGameField::GetRandomEmptyTile()
+{
+	TArray<ATile*> EmptyTiles;
+	for (ATile* Tile : Tiles) if (Tile->GetStatus() == ETileStatus::EMPTY) EmptyTiles.Add(Tile);
+	return EmptyTiles[FMath::Rand() % EmptyTiles.Num()];
+}
+
+TArray<ATile*> AGameField::GetReachableTiles(ATile* DepartureTile)
+{
+	TArray<ATile*> ReachableTiles;
+	// TODO
+	return ReachableTiles;
+}
+
 // Called when the game starts or when spawned
 void AGameField::BeginPlay()
 {
@@ -59,3 +73,5 @@ void AGameField::BeginPlay()
 	UE_LOG(LogTemp, Warning, TEXT("AGameField::BeginPlay() called!"));
 	GenerateField();
 }
+
+

@@ -3,9 +3,36 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameField.h"
 #include "GameFramework/GameModeBase.h"
+#include "PlayerInterface.h"
+#include "Gamefield.h"
 #include "AW_GameMode.generated.h"
 
+class ABaseCharacter;
+
+UENUM()
+enum class ECharacterId : uint8
+{
+	SANTA,
+	BERNARD,
+	GRINCH,
+	MAX
+};
+
+UENUM()
+enum class ECharacterType : uint8
+{
+	BRAWLER,
+	SNIPER
+};
+
+UENUM()
+enum class EPlayer : uint32
+{
+	HUMAN,
+	CPU
+};
 /**
  * 
  */
@@ -13,5 +40,71 @@ UCLASS()
 class ADVANCEWARS_2_API AAW_GameMode : public AGameModeBase
 {
 	GENERATED_BODY()
+
+public:
+
+	bool IsGameOver;
+
+	TArray<IPlayerInterface*> Players;
+
+	EPlayer CurrentPlayer;
+
+	int32 MoveCounter;
+
+	TArray<ABaseCharacter*> Characters;
+	
+	TArray<ABaseCharacter*> AliveCharacters;
+	
+	
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AGameField> GameFieldClass;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 FieldSize;
+
+	UPROPERTY(VisibleAnywhere)
+	AGameField* GField;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<AActor> SantaActor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<AActor> BernardActor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<AActor> GrinchActor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<AActor> MaxActor;
+
+	AAW_GameMode();
+
+	virtual void BeginPlay() override;
+
+	void ChoosePlayerAndStartGame();
+
+	void SetTileStatus(ETileStatus status, const FVector& Pos);
+
+	EPlayer GetPlayerEncodeByPlayerNumber(int32 PlayerNumber);
+
+	int32 GetPlayerNumberByPlayerEncode(EPlayer PlayerEncode);
+	
+	ECharacterId GetCharacterIdFBySubclass(TSubclassOf<AActor> ThisActor);
+
+	TSubclassOf<AActor> GetSubclassByCharacterId(ECharacterId Id);
+
+	int32 GetNextPlayer(int32 Player);
+
+	void TurnNextPlayer();
+
+	TArray<ABaseCharacter*> GetCurrentPlayerCharacters();
+	
+	TArray<ABaseCharacter*> GetCurrentPlayerAliveCharacters();
+	
+    void SpawnCharacter(ECharacterId CharacterId, ATile* SelectedTile);
+
+	void MoveCharacter(ABaseCharacter* Char, ATile* SelectedTile);
+	
+	
 	
 };

@@ -47,6 +47,13 @@ void AHumanPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 }
 
+void AHumanPlayer::OnSetupTurn()
+{
+	IsMyTurn = true;
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, "Your Turn");
+	//GameInstance->SetTurnMessage(TEXT("Human Turn"));
+}
+
 void AHumanPlayer::OnTurn() {
 	IsMyTurn = true;
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, "Your Turn");

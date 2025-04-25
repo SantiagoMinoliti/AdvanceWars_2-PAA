@@ -47,7 +47,7 @@ protected:
 
 	// (x, y) position of the tile
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	FIntPoint TileGridPosition;
+	FVector2D TileGridPosition;
 
 public:	
 	// Called every frame

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-//#include "AW_GameInstance.h"
+#include "AW_GameInstance.h"
 #include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "PlayerInterface.h"
@@ -21,7 +21,7 @@ public:
 
 	UCameraComponent* Camera;
 
-	//UAW_GameInstance* GameInstance;
+	UAW_GameInstance* GameInstance;
 
 protected:
 	// Called when the game starts or when spawned
@@ -36,6 +36,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual void OnSetupTurn() override;
 	virtual void OnTurn() override;
 	virtual void OnWin() override;
 	virtual void OnLose() override;

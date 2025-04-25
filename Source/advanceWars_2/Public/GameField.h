@@ -53,7 +53,9 @@ public:
 	
 	FVector2D GetXYPositionByRelativeLocation(const FVector& Location) const;
 
+	ATile* GetRandomEmptyTile();
 	
+	TArray<ATile*> GetReachableTiles(ATile* DepartureTile);
 
 	
 
