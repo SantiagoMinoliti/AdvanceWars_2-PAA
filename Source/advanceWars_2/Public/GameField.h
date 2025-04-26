@@ -38,13 +38,16 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Field Config")
 	float TileSize;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Field Config")
+	float ObstacleSpreadness;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ATile> TileClass_Odd;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ATile> TileClass_Even;
-
+	
 	virtual void OnConstruction(const FTransform& Transform) override;
 
 	UFUNCTION(BlueprintCallable)
@@ -60,6 +63,8 @@ public:
 	
 	FVector2D GetXYPositionByRelativeLocation(const FVector& Location) const;
 
+	ATile* GetTileByXYPosition(const FVector2D) const;
+	
 	ATile* GetRandomEmptyTile();
 	
 	TArray<ATile*> GetReachableTiles(ATile* DepartureTile, int32 TileDistance, bool bIgnoreObstacles);
@@ -73,4 +78,14 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+
+private:
+
+	FTileNode* CurrentNode;
+	int32 TreeCardinality;
+	
+	ATile* GetRandomTile();
+	bool RandomStep();
+	FTileNode* SelectRandomLeaf();
+	void PlaceObstacle(ATile* Tile);
 };

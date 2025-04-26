@@ -1,6 +1,7 @@
 #include "Tile.h"
 
 #include "AW_GameMode.h"
+#include "GameModeInfoCustomizer.h"
 
 // Sets default values
 ATile::ATile()
@@ -13,6 +14,7 @@ ATile::ATile()
 	SetRootComponent(Scene);
 	StaticMeshComponent->SetupAttachment(Scene);
 
+	TileNode = nullptr;
 	Status = ETileStatus::EMPTY;
 	TileGridPosition = FIntPoint(0, 0);
 }
@@ -37,6 +39,25 @@ FVector2D ATile::GetPosition() const {
 void ATile::Clear()
 {
 	Status = ETileStatus::EMPTY;
+	TileNode = nullptr;
+}
+
+TArray<ATile*> ATile::GetNeighbors()
+{
+	TArray<ATile*> Neighbors;
+	
+	AAW_GameMode* GameMode = Cast<AAW_GameMode>(GetWorld()->GetAuthGameMode());
+	Neighbors.Add(GameMode->GField->GetTileByXYPosition(FVector2D(TileGridPosition.X + 1, TileGridPosition.Y)));
+	Neighbors.Add(GameMode->GField->GetTileByXYPosition(FVector2D(TileGridPosition.X, TileGridPosition.Y + 1)));
+	Neighbors.Add(GameMode->GField->GetTileByXYPosition(FVector2D(TileGridPosition.X - 1, TileGridPosition.Y)));
+	Neighbors.Add(GameMode->GField->GetTileByXYPosition(FVector2D(TileGridPosition.X, TileGridPosition.Y - 1)));
+	
+	return Neighbors;
+}
+
+bool ATile::IsVisited() const
+{
+	return TileNode != nullptr;
 }
 
 // Called when the game starts or when spawned

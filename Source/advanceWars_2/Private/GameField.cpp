@@ -44,9 +44,16 @@ void AGameField::GenerateField() {
 	}
 }
 
+
+
 void AGameField::GenerateObstacles()
 {
-	
+	CurrentNode = new FTileNode(GetRandomTile());
+	TreeCardinality++;
+	while (RandomStep());
+	FTileNode* RandomLeaf = SelectRandomLeaf();
+	PlaceObstacle(RandomLeaf->Tile);
+	TreeCardinality = 0;
 }
 
 
@@ -60,6 +67,11 @@ FVector AGameField::GetRelativeLocationByXYPosition(const int32 InX, const int32
 
 FVector2D AGameField::GetXYPositionByRelativeLocation(const FVector& Location) const {
 	return FVector2D(Location[0], Location[1]) / TileSize;
+}
+
+ATile* AGameField::GetTileByXYPosition(const FVector2D) const
+{
+// CONTINUE HERE
 }
 
 ATile* AGameField::GetRandomEmptyTile()
@@ -81,6 +93,45 @@ void AGameField::BeginPlay()
 {
 	Super::BeginPlay();
 	UE_LOG(LogTemp, Warning, TEXT("AGameField::BeginPlay() called!"));
+}
+
+ATile* AGameField::GetRandomTile()
+{
+	return Tiles[FMath::RandRange(0, Tiles.Num() - 1)];
+}
+
+bool AGameField::RandomStep()
+{
+	TArray<ATile*> Neighbors = CurrentNode->Tile->GetNeighbors();
+	TArray<ATile*> UnvisitedNeighbors;
+	TArray<ATile*> ConnectedNeighbors;
+	for (ATile* Neighbor : Neighbors)
+	{
+		if (!Neighbor->IsVisited()) UnvisitedNeighbors.Add(Neighbor);
+		else if (CurrentNode->IsConnectedTo(Neighbor->TileNode)) ConnectedNeighbors.Add(Neighbor);
+	}
+	if (UnvisitedNeighbors.Num() > 0 && FMath::RandRange(0, 100) > 50 * (1 - FMath::Exp((-1) * ObstacleSpreadness)))
+	{
+		FTileNode* OldNode = CurrentNode;
+		CurrentNode = new FTileNode(UnvisitedNeighbors[FMath::RandRange(0, UnvisitedNeighbors.Num() - 1)], OldNode);
+		OldNode->AddChild(CurrentNode);
+		TreeCardinality++;
+		CurrentNode->Tile->TileNode = CurrentNode;
+	} else
+	{
+		CurrentNode = ConnectedNeighbors[FMath::RandRange(0, ConnectedNeighbors.Num() - 1)]->TileNode;
+		if (TreeCardinality == Tiles.Num()) return false;
+	}
+	return true;
+}
+
+FTileNode* AGameField::SelectRandomLeaf()
+{
+	// CONTINUE HERE , poi... hai un riferimento all'albero? forse salva la root
+}
+
+void AGameField::PlaceObstacle(ATile* Tile)
+{
 }
 
 

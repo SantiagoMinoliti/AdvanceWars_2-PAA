@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "TileNode.h"
 #include "GameFramework/Actor.h"
 #include "Tile.generated.h"
 
@@ -34,6 +35,12 @@ public:
 
 	UFUNCTION()
 	void Clear();
+
+	FTileNode* TileNode;
+
+	TArray<ATile*> GetNeighbors();
+
+	bool IsVisited() const;
 
 protected:
 	// Called when the game starts or when spawned

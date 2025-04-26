@@ -42,7 +42,7 @@ void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GameMode = (AAW_GameMode*)(GetWorld()->GetAuthGameMode());
+	GameMode = Cast<AAW_GameMode>(GetWorld()->GetAuthGameMode());
 	GameMode->GField->OnResetEvent.AddDynamic(this, &ABaseCharacter::SelfDestroy);
 }
 
