@@ -27,12 +27,6 @@ enum class ECharacterType : uint32
 	SNIPER
 };
 
-UENUM()
-enum class EPlayer : uint32
-{
-	HUMAN,
-	CPU
-};
 /**
  * 
  */
@@ -48,6 +42,8 @@ public:
 	TArray<IPlayerInterface*> Players;
 	
 	EPlayer CurrentPlayer;
+
+	int32 CurrentPlayerNumber;
 
 	int32 MoveCounter;
 	
@@ -97,7 +93,7 @@ public:
 
 	ABaseCharacter* GetCharacterByCharacterId(ECharacterId CharacterId);
 
-	int32 GetNextPlayer(int32 Player);
+	int32 GetNextPlayerNumber();
 
 	void TurnNextPlayer();
 

@@ -23,6 +23,7 @@ void AAW_GameMode::BeginPlay() {
 	if(GameFieldClass != nullptr) {
 		GField = GetWorld()->SpawnActor<AGameField>(GameFieldClass);
 		GField->Size = FieldSize;
+		GField->GenerateField();
 	} else {
 		UE_LOG(LogTemp, Error, TEXT("Game Field is null"));
 	}
@@ -32,35 +33,35 @@ void AAW_GameMode::BeginPlay() {
 
 	Players.Add(HumanPlayer);
 
-	auto* AI = GetWorld()->SpawnActor<ARandomPlayer>(FVector(), FRotator());
-
+	auto* CPUPlayer = GetWorld()->SpawnActor<ARandomPlayer>(FVector(), FRotator());
+	Players.Add(CPUPlayer);
 	
 }
 
 void AAW_GameMode::ChoosePlayerAndStartGame()
 {
+	CurrentPlayerNumber = FMath::RandRange(0, Players.Num() - 1);
+
+	for (int32 i = 0; i < Players.Num(); i++)
+	{
+		Players[i]->PlayerNumber = i;
+	}
+	MoveCounter++;
+	Players[CurrentPlayerNumber]->OnSetupTurn();
 }
 
 EPlayer AAW_GameMode::GetPlayerEncodeByPlayerNumber(int32 PlayerNumber)
 {
-	switch (PlayerNumber)
-	{
-	case 0:
-		return EPlayer::HUMAN;
-	default:
-		return EPlayer::CPU;
-	}
+	return Players[PlayerNumber]->PlayerEncode;
 }
 
 int32 AAW_GameMode::GetPlayerNumberByPlayerEncode(EPlayer PlayerEncode)
 {
-	switch (PlayerEncode)
+	for (auto* Player : Players)
 	{
-		case EPlayer::HUMAN:
-			return 0;
-		default:
-			return 1;
+		if (Player->PlayerEncode == PlayerEncode) return Player->PlayerNumber;
 	}
+	return NULL;
 }
 
 ECharacterId AAW_GameMode::GetCharacterIdFBySubclass(TSubclassOf<AActor> ThisActor)
@@ -101,13 +102,19 @@ TSubclassOf<AActor> AAW_GameMode::GetSubclassByCharacterId(ECharacterId Id)
 	}
 }
 
-int32 AAW_GameMode::GetNextPlayer(int32 Player)
+int32 AAW_GameMode::GetNextPlayerNumber()
 {
-	return 1;
+	return 1 - CurrentPlayerNumber;
 }
 
 void AAW_GameMode::TurnNextPlayer()
 {
+	if (IsGameOver) return;
+	MoveCounter++;
+	CurrentPlayerNumber = GetNextPlayerNumber();
+	auto* Player = Players[CurrentPlayerNumber];
+	CurrentPlayer = Player->PlayerEncode;
+	Player->OnTurn();
 }
 
 TArray<ABaseCharacter*> AAW_GameMode::GetCurrentPlayerCharacters()
@@ -216,10 +223,20 @@ void AAW_GameMode::CheckWinConditions()
 	}
 	if (bSantaTeamAlive && !bGrinchTeamAlive)
 	{
-		// TODO: on win Santa
+		IsGameOver = true;
+		for(auto* Player : Players)
+		{
+			if (Player->PlayerEncode == EPlayer::HUMAN) Player->OnWin();
+			else Player->OnLose();
+		}
 	}
 	else if (!bSantaTeamAlive && bGrinchTeamAlive)
 	{
-		// TODO: on win Grinch
+		IsGameOver = true;
+		for(auto* Player : Players)
+		{
+			if (Player->PlayerEncode == EPlayer::CPU) Player->OnWin();
+			else Player->OnLose();
+		}
 	}
 }

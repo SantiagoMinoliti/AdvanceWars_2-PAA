@@ -7,6 +7,13 @@
 #include "PlayerInterface.generated.h"
 
 UENUM()
+enum class EPlayer : uint32
+{
+	HUMAN,
+	CPU
+};
+
+UENUM()
 enum class ETeam : uint32 {
 	SANTA,
 	GRINCH,
@@ -30,6 +37,7 @@ class ADVANCEWARS_2_API IPlayerInterface
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	int32 PlayerNumber;
+	EPlayer PlayerEncode;
 	ETeam Turn;
 
 	virtual void OnSetupTurn() {};

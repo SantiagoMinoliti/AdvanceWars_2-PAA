@@ -11,7 +11,9 @@ ARandomPlayer::ARandomPlayer()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	GameInstance = Cast<UAW_GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-
+	PlayerNumber = -2;
+	Turn = ETeam::GRINCH;
+	PlayerEncode = EPlayer::CPU;
 }
 
 // Called when the game starts or when spawned
@@ -99,8 +101,7 @@ void ARandomPlayer::OnTurn() {
 			
 		}, 3.f, false);
 	}
-	
-	
+	GameMode->TurnNextPlayer();
 }
 
 void ARandomPlayer::OnWin() {

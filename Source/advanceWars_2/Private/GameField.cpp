@@ -71,7 +71,6 @@ void AGameField::BeginPlay()
 {
 	Super::BeginPlay();
 	UE_LOG(LogTemp, Warning, TEXT("AGameField::BeginPlay() called!"));
-	GenerateField();
 }
 
 

@@ -4,6 +4,7 @@
 #include "HumanPlayer.h"
 #include "GameField.h"
 //#include "AW_GameMode.h"
+#include "AW_GameMode.h"
 #include "Components/InputComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -24,6 +25,7 @@ AHumanPlayer::AHumanPlayer()
 
 	PlayerNumber = -1;
 	Turn = ETeam::None;
+	PlayerEncode = EPlayer::HUMAN;
 }
 
 // Called when the game starts or when spawned
