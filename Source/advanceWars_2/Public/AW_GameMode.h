@@ -98,6 +98,8 @@ public:
 
 	void TurnNextPlayer();
 
+	void SetupTurnNextPlayer();
+
 	TArray<ABaseCharacter*> GetCurrentPlayerCharacters();
 	
 	TArray<ABaseCharacter*> GetCurrentPlayerAliveCharacters();

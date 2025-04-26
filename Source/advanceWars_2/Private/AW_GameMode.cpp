@@ -130,6 +130,19 @@ void AAW_GameMode::TurnNextPlayer()
 	Player->OnTurn();
 }
 
+void AAW_GameMode::SetupTurnNextPlayer()
+{
+	if (AliveCharacters.Num() == 4)
+	{
+		TurnNextPlayer();
+	} else {
+		CurrentPlayerNumber = GetNextPlayerNumber();
+		auto* Player = Players[CurrentPlayerNumber];
+		CurrentPlayer = Player->PlayerEncode;
+		Player->OnSetupTurn();
+	}
+}
+
 TArray<ABaseCharacter*> AAW_GameMode::GetCurrentPlayerCharacters()
 {
 	TArray<ABaseCharacter*> Chars;

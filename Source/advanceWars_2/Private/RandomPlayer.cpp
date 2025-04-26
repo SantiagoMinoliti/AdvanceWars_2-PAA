@@ -73,6 +73,8 @@ void ARandomPlayer::OnSetupTurn()
 	ATile* ExtractedTile = GameMode->GField->GetRandomEmptyTile();
 
 	GameMode->SpawnCharacter(CharacterId, ExtractedTile);
+
+	GameMode->SetupTurnNextPlayer();
 }
 
 void ARandomPlayer::OnTurn() {
