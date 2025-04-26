@@ -8,6 +8,8 @@
 #include "Tile.h"
 #include "GameField.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnReset);
+
 UCLASS()
 class ADVANCEWARS_2_API AGameField : public AActor
 {
@@ -25,11 +27,14 @@ public:
 	
 	static const int32 NOT_ASSIGNED = -1;
 
-	// UPROPERTY(BlueprintAssignable)
-	// FOnReset OnResetEvent;
+	UPROPERTY(BlueprintAssignable)
+	FOnReset OnResetEvent;
 		
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Field Config")
 	int32 Size;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Field Config")
+	int32 ObstaclesPercentage;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Field Config")
 	float TileSize;
@@ -46,6 +51,8 @@ public:
 	void ResetField();
 
 	void GenerateField();
+
+	void GenerateObstacles();
 
 	FVector2D GetPosition(const FHitResult& Hit);
 

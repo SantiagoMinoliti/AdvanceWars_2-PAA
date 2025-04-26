@@ -32,6 +32,9 @@ public:
 	
 	FVector2D GetPosition() const;
 
+	UFUNCTION()
+	void Clear();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

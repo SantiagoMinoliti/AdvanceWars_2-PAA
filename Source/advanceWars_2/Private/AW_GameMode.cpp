@@ -17,6 +17,9 @@ AAW_GameMode::AAW_GameMode() {
 
 void AAW_GameMode::BeginPlay() {
 	Super::BeginPlay();
+
+	GField->OnResetEvent.AddDynamic(this, &AAW_GameMode::ResetGameMode);
+	
 	IsGameOver = false;
 	MoveCounter = 0;
 	AHumanPlayer* HumanPlayer = Cast<AHumanPlayer>(*TActorIterator<AHumanPlayer>(GetWorld()));
@@ -36,6 +39,16 @@ void AAW_GameMode::BeginPlay() {
 	auto* CPUPlayer = GetWorld()->SpawnActor<ARandomPlayer>(FVector(), FRotator());
 	Players.Add(CPUPlayer);
 	
+}
+
+void AAW_GameMode::ResetGameMode()
+{
+	IsGameOver = false;
+	MoveCounter = 0;
+
+	Players.Empty();
+	
+	ChoosePlayerAndStartGame();
 }
 
 void AAW_GameMode::ChoosePlayerAndStartGame()
@@ -215,7 +228,8 @@ void AAW_GameMode::InflictDamage(ATile* Tile, float Damage)
 
 void AAW_GameMode::CheckWinConditions()
 {
-	bool bSantaTeamAlive, bGrinchTeamAlive = false;
+	bool bSantaTeamAlive = false;
+	bool bGrinchTeamAlive = false;
 	for (ABaseCharacter* Char : AliveCharacters)
 	{
 		if (Char->CharacterId == ECharacterId::SANTA || Char->CharacterId == ECharacterId::BERNARD) bSantaTeamAlive = true;

@@ -1,5 +1,7 @@
 #include "Tile.h"
 
+#include "AW_GameMode.h"
+
 // Sets default values
 ATile::ATile()
 {
@@ -32,11 +34,18 @@ FVector2D ATile::GetPosition() const {
 	return TileGridPosition;
 }
 
+void ATile::Clear()
+{
+	Status = ETileStatus::EMPTY;
+}
+
 // Called when the game starts or when spawned
 void ATile::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	AAW_GameMode* GameMode = Cast<AAW_GameMode>(GetWorld()->GetAuthGameMode());
+	GameMode->GField->OnResetEvent.AddDynamic(this, &ATile::Clear);
 }
 
 // Called every frame

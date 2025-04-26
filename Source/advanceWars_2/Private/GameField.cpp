@@ -2,13 +2,15 @@
 
 #include "./GameField.h"
 
+#include "AW_GameMode.h"
 #include "IO/IoContainerHeader.h"
 
 // Sets default values
 AGameField::AGameField() {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
-	
+
+	ObstaclesPercentage = 25;
 	Size = 25;
 	TileSize = 150.0f;
 }
@@ -18,7 +20,9 @@ void AGameField::OnConstruction(const FTransform& Transform) {
 }
 
 void AGameField::ResetField() {
-
+	
+	OnResetEvent.Broadcast();
+	GenerateObstacles();
 }
 
 void AGameField::GenerateField() {
@@ -39,6 +43,12 @@ void AGameField::GenerateField() {
 		}
 	}
 }
+
+void AGameField::GenerateObstacles()
+{
+	
+}
+
 
 FVector2D AGameField::GetPosition(const FHitResult& Hit) {
 	return FVector2D(0, 0);

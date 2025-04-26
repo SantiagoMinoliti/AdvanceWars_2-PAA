@@ -75,10 +75,11 @@ public:
 
 	virtual void BeginPlay() override;
 
+	UFUNCTION()
+	void ResetGameMode();
+	
 	void ChoosePlayerAndStartGame();
-
-	void SetTileStatus(ETileStatus status, const FVector& Pos);
-
+	
 	EPlayer GetPlayerEncodeByPlayerNumber(int32 PlayerNumber);
 
 	int32 GetPlayerNumberByPlayerEncode(EPlayer PlayerEncode);

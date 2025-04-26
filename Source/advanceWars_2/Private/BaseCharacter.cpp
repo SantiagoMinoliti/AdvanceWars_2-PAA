@@ -10,7 +10,7 @@ ABaseCharacter::ABaseCharacter()
 {
 	CharacterId = ECharacterId::SANTA;
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	CharacterId = CharacterId;
 
@@ -43,7 +43,7 @@ void ABaseCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	GameMode = (AAW_GameMode*)(GetWorld()->GetAuthGameMode());
-	// GameMode->GField->OnResetEvent.AddDynamic(this, &ABaseCharacter::SelfDestroy);
+	GameMode->GField->OnResetEvent.AddDynamic(this, &ABaseCharacter::SelfDestroy);
 }
 
 // Called every frame
