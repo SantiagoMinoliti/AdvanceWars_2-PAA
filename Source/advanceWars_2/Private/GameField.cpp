@@ -11,6 +11,7 @@ AGameField::AGameField() {
 	PrimaryActorTick.bCanEverTick = false;
 
 	ObstaclesPercentage = 25;
+	ObstacleSpreadness = 0.f;
 	Size = 25;
 	TileSize = 150.0f;
 }
@@ -30,10 +31,12 @@ void AGameField::GenerateField() {
 		for (int32 j = 0; j < Size; j++) {
 			FVector Location = GetRelativeLocationByXYPosition(i, j);
 			ATile* Obj;
+			FActorSpawnParameters SpawnParams;
+            SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 			if((i + j) % 2 == 0) {
-				Obj = GetWorld()->SpawnActor<ATile>(TileClass_Odd, Location, FRotator::ZeroRotator);
+				Obj = GetWorld()->SpawnActor<ATile>(TileClass_Odd, Location, FRotator::ZeroRotator, SpawnParams);
 			} else {
-				Obj = GetWorld()->SpawnActor<ATile>(TileClass_Even, Location, FRotator::ZeroRotator);
+				Obj = GetWorld()->SpawnActor<ATile>(TileClass_Even, Location, FRotator::ZeroRotator, SpawnParams);
 			}
 			const float TileScale = TileSize / 100;
 			Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
@@ -49,10 +52,22 @@ void AGameField::GenerateField() {
 void AGameField::GenerateObstacles()
 {
 	CurrentNode = new FTileNode(GetRandomTile());
-	TreeCardinality++;
+	RootNode = CurrentNode;
+	TreeCardinality = 1;
 	while (RandomStep());
-	FTileNode* RandomLeaf = SelectRandomLeaf();
-	PlaceObstacle(RandomLeaf->Tile);
+	int32 ObstaclesPlaced = 0;
+	while (ObstaclesPlaced < ObstaclesPercentage * Tiles.Num() / 100)
+	{
+		FTileNode* RandomLeaf = SelectRandomLeaf();
+		PlaceObstacle(RandomLeaf->Tile);
+		ObstaclesPlaced++;
+		
+		// Delete RandomLeaf
+		RandomLeaf->Parent->Children.Remove(RandomLeaf);
+		RandomLeaf->Tile->TileNode = nullptr;
+		delete RandomLeaf;
+		TreeCardinality--;
+	}
 	TreeCardinality = 0;
 }
 
@@ -69,9 +84,9 @@ FVector2D AGameField::GetXYPositionByRelativeLocation(const FVector& Location) c
 	return FVector2D(Location[0], Location[1]) / TileSize;
 }
 
-ATile* AGameField::GetTileByXYPosition(const FVector2D) const
+ATile* AGameField::GetTileByXYPosition(const FVector2D Position) const
 {
-// CONTINUE HERE
+	return TileMap[Position];
 }
 
 ATile* AGameField::GetRandomEmptyTile()
@@ -127,11 +142,30 @@ bool AGameField::RandomStep()
 
 FTileNode* AGameField::SelectRandomLeaf()
 {
-	// CONTINUE HERE , poi... hai un riferimento all'albero? forse salva la root
+	CurrentNode = RootNode;
+	RandomSink();
+	return CurrentNode;
 }
 
-void AGameField::PlaceObstacle(ATile* Tile)
+void AGameField::RandomSink()
 {
+	if (CurrentNode->Children.Num() == 0) return;
+	CurrentNode = CurrentNode->Children[FMath::RandRange(0, CurrentNode->Children.Num() - 1)];
+	RandomSink();
+}
+
+void AGameField::PlaceObstacle(ATile* Tile) {
+	FVector2D Position = Tile->GetPosition();
+	FVector Location = GetRelativeLocationByXYPosition(Position.X, Position.Y);
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	ATile* Obj = GetWorld()->SpawnActor<ATile>(TileClass_Obstacle, Location, FRotator::ZeroRotator, SpawnParams);
+
+	const float TileScale = TileSize / 100;
+	Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.4));
+	Obj->SetPosition(Position.X, Position.Y);
+	
+	Tile->SetStatus(ETileStatus::OBSTACLE);
 }
 
 

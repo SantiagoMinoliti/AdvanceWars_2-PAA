@@ -18,20 +18,24 @@ AAW_GameMode::AAW_GameMode() {
 void AAW_GameMode::BeginPlay() {
 	Super::BeginPlay();
 
-	GField->OnResetEvent.AddDynamic(this, &AAW_GameMode::ResetGameMode);
 	
 	IsGameOver = false;
 	MoveCounter = 0;
 	AHumanPlayer* HumanPlayer = Cast<AHumanPlayer>(*TActorIterator<AHumanPlayer>(GetWorld()));
 	if(GameFieldClass != nullptr) {
-		GField = GetWorld()->SpawnActor<AGameField>(GameFieldClass);
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		GField = GetWorld()->SpawnActor<AGameField>(GameFieldClass, SpawnParams);
+		UE_LOG(LogTemp, Warning, TEXT("Game Field: %s"), *GetNameSafe(GField));
 		GField->Size = FieldSize;
 		GField->GenerateField();
+		GField->OnResetEvent.AddDynamic(this, &AAW_GameMode::ResetGameMode);
 	} else {
-		UE_LOG(LogTemp, Error, TEXT("Game Field is null"));
+		UE_LOG(LogTemp, Error, TEXT("Game Field Class is null, GameFieldClass: %s"), *GetNameSafe(GameFieldClass));
 	}
 	float CameraPosX = ((GField->TileSize * GField->Size / 2));
-	FVector CameraPos(CameraPosX, CameraPosX, 1000.0f);
+	FVector CameraPos(CameraPosX - 78, CameraPosX, 3370.f);
 	HumanPlayer->SetActorLocationAndRotation(CameraPos, FRotationMatrix::MakeFromX(FVector(0,0,-1)).Rotator());
 
 	Players.Add(HumanPlayer);
@@ -210,8 +214,10 @@ TArray<ABaseCharacter*> AAW_GameMode::GetCurrentPlayerAliveCharacters()
 
 void AAW_GameMode::SpawnCharacter(ECharacterId CharacterId, ATile* SelectedTile)
 {
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	FVector2D Location = SelectedTile->GetPosition();
-	ABaseCharacter* Char = GetWorld()->SpawnActor<ABaseCharacter>(GetSubclassByCharacterId(CharacterId), FVector(Location.X, Location.Y, 0), FRotator::ZeroRotator);
+	ABaseCharacter* Char = GetWorld()->SpawnActor<ABaseCharacter>(GetSubclassByCharacterId(CharacterId), FVector(Location.X, Location.Y, 0), FRotator::ZeroRotator, SpawnParams);
 	SelectedTile->SetStatus(Char->GetCorrespondingTileStatus());
 	Char->SetStandingTile(SelectedTile);
 	AliveCharacters.Add(Char);

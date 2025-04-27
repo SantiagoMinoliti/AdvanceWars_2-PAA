@@ -40,6 +40,7 @@ void ATile::Clear()
 {
 	Status = ETileStatus::EMPTY;
 	TileNode = nullptr;
+	Obstacle->Destroy();
 }
 
 TArray<ATile*> ATile::GetNeighbors()

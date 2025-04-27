@@ -36,6 +36,8 @@ public:
 	UFUNCTION()
 	void Clear();
 
+	ATile* Obstacle;
+
 	FTileNode* TileNode;
 
 	TArray<ATile*> GetNeighbors();

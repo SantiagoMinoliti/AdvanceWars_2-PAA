@@ -47,6 +47,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ATile> TileClass_Even;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ATile> TileClass_Obstacle;
 	
 	virtual void OnConstruction(const FTransform& Transform) override;
 
@@ -63,7 +66,7 @@ public:
 	
 	FVector2D GetXYPositionByRelativeLocation(const FVector& Location) const;
 
-	ATile* GetTileByXYPosition(const FVector2D) const;
+	ATile* GetTileByXYPosition(const FVector2D Position) const;
 	
 	ATile* GetRandomEmptyTile();
 	
@@ -82,10 +85,12 @@ protected:
 private:
 
 	FTileNode* CurrentNode;
+	FTileNode* RootNode;
 	int32 TreeCardinality;
 	
 	ATile* GetRandomTile();
 	bool RandomStep();
 	FTileNode* SelectRandomLeaf();
+    void RandomSink();
 	void PlaceObstacle(ATile* Tile);
 };
