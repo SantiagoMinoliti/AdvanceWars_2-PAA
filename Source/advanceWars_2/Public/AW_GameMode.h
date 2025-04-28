@@ -71,6 +71,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<AActor> MaxActor;
 
+	UAW_HUD* HUD;
+
 	AAW_GameMode();
 
 	virtual void BeginPlay() override;

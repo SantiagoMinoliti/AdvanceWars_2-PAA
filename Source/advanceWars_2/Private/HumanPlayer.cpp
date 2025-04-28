@@ -52,8 +52,13 @@ void AHumanPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 void AHumanPlayer::OnSetupTurn()
 {
 	IsMyTurn = true;
+	HUD->SetToggleButtonVisibility(true);
+	HUD->SetCharacterTypeVisibility(true);
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, "Your Turn");
 	//GameInstance->SetTurnMessage(TEXT("Human Turn"));
+	HUD->SetToggleButtonVisibility(false);
+	HUD->SetCharacterTypeVisibility(false);
+
 }
 
 void AHumanPlayer::OnTurn() {

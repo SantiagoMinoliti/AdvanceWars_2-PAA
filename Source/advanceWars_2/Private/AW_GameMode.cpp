@@ -6,6 +6,7 @@
 #include "BaseCharacter.h"
 #include "HumanPlayer.h"
 #include "RandomPlayer.h"
+#include "AW_HUD.h"
 #include "MinimaxPlayer.h"
 #include "EngineUtils.h"
 
@@ -18,6 +19,28 @@ AAW_GameMode::AAW_GameMode() {
 void AAW_GameMode::BeginPlay() {
 	Super::BeginPlay();
 
+	// Assicurati che l'HUD sia correttamente inizializzato
+	HUD = Cast<UAW_HUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+
+	if (HUD)
+	{
+		// Nascondi le vite dei personaggi
+		HUD->SetHealthVisibility(ECharacterId::Santa, false);
+		HUD->SetHealthVisibility(ECharacterId::Bernard, false);
+		HUD->SetHealthVisibility(ECharacterId::Grinch, false);
+		HUD->SetHealthVisibility(ECharacterId::Max, false);
+
+		// Rendi visibili il bottone e il testo "Brawler"
+		HUD->SetToggleButtonVisibility(false);
+		HUD->SetCharacterTypeVisibility(false);
+
+		HUD->CharacterType = "Choose Character";  // Imposta direttamente il tipo di personaggio
+		if (HUD->CharacterTypeTextBlock)
+		{
+			HUD->CharacterTypeTextBlock->SetText(FText::FromString(HUD->CharacterType));
+			HUD->CharacterType = "Choose Character";
+		}
+	}
 	
 	IsGameOver = false;
 	MoveCounter = 0;
@@ -107,6 +130,9 @@ void AAW_GameMode::ChoosePlayerAndStartGame()
 		Players[i]->PlayerNumber = i;
 	}
 	MoveCounter++;
+	HUD->bIsPlayerTurn = Players[CurrentPlayerNumber]->PlayerEncode == EPlayer::HUMAN;
+	HUD->SetTurnText();
+	if (HUD->bIsPlayerTurn) HUD->SetCharacterTypeVisibility(true);
 	Players[CurrentPlayerNumber]->OnSetupTurn();
 }
 
@@ -174,18 +200,24 @@ void AAW_GameMode::TurnNextPlayer()
 	CurrentPlayerNumber = GetNextPlayerNumber();
 	auto* Player = Players[CurrentPlayerNumber];
 	CurrentPlayer = Player->PlayerEncode;
+	HUD->ToggleTurn();
 	Player->OnTurn();
 }
+
+// CONTINUE HERE: Life lowered updates HUD. HumanPlayer OnTurn and OnSetupTurn (if there are 2 characters left to place look in the hud what is CharacterType if "Brawler" or "Sniper" or else and permit to place it if valid
 
 void AAW_GameMode::SetupTurnNextPlayer()
 {
 	if (AliveCharacters.Num() == 4)
 	{
+		HUD->SetHealthVisibility(true);
+		HUD->SetCharacterTypeVisibility(false);
 		TurnNextPlayer();
 	} else {
 		CurrentPlayerNumber = GetNextPlayerNumber();
 		auto* Player = Players[CurrentPlayerNumber];
 		CurrentPlayer = Player->PlayerEncode;
+		HUD->SetCharacterTypeVisibility(AliveCharacters.Num() == 1 && Player->PlayerEncode == EPlayer::HUMAN);
 		Player->OnSetupTurn();
 	}
 }
