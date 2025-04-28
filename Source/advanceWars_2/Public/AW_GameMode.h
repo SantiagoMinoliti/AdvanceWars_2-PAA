@@ -75,6 +75,8 @@ public:
 
 	virtual void BeginPlay() override;
 
+	virtual void PostLogin(APlayerController* NewPlayerController) override;
+
 	UFUNCTION()
 	void ResetGameMode();
 	

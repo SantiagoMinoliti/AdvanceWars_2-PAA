@@ -14,7 +14,6 @@ ATile::ATile()
 	SetRootComponent(Scene);
 	StaticMeshComponent->SetupAttachment(Scene);
 
-	TileNode = nullptr;
 	Status = ETileStatus::EMPTY;
 	TileGridPosition = FIntPoint(0, 0);
 }
@@ -32,14 +31,15 @@ void ATile::SetPosition(const double InX, const double InY) {
 	TileGridPosition.Y = InY;
 }
 
-FVector2D ATile::GetPosition() const {
+FVector2D ATile::GetPosition() const
+{
 	return TileGridPosition;
 }
+
 
 void ATile::Clear()
 {
 	Status = ETileStatus::EMPTY;
-	TileNode = nullptr;
 	Obstacle->Destroy();
 }
 
@@ -48,18 +48,25 @@ TArray<ATile*> ATile::GetNeighbors()
 	TArray<ATile*> Neighbors;
 	
 	AAW_GameMode* GameMode = Cast<AAW_GameMode>(GetWorld()->GetAuthGameMode());
-	Neighbors.Add(GameMode->GField->GetTileByXYPosition(FVector2D(TileGridPosition.X + 1, TileGridPosition.Y)));
-	Neighbors.Add(GameMode->GField->GetTileByXYPosition(FVector2D(TileGridPosition.X, TileGridPosition.Y + 1)));
-	Neighbors.Add(GameMode->GField->GetTileByXYPosition(FVector2D(TileGridPosition.X - 1, TileGridPosition.Y)));
-	Neighbors.Add(GameMode->GField->GetTileByXYPosition(FVector2D(TileGridPosition.X, TileGridPosition.Y - 1)));
+	
+	ATile* Neighbour0 = GameMode->GField->GetTileByXYPosition(FVector2D(TileGridPosition.X + 1, TileGridPosition.Y));
+	ATile* Neighbour1 = GameMode->GField->GetTileByXYPosition(FVector2D(TileGridPosition.X, TileGridPosition.Y + 1));
+	ATile* Neighbour2 = GameMode->GField->GetTileByXYPosition(FVector2D(TileGridPosition.X - 1, TileGridPosition.Y));
+	ATile* Neighbour3 = GameMode->GField->GetTileByXYPosition(FVector2D(TileGridPosition.X, TileGridPosition.Y - 1));	
+			
+	if(Neighbour0) Neighbors.Add(Neighbour0);		
+	if(Neighbour1) Neighbors.Add(Neighbour1);		
+	if(Neighbour2) Neighbors.Add(Neighbour2);	
+	if(Neighbour3) Neighbors.Add(Neighbour3);
 	
 	return Neighbors;
 }
 
-bool ATile::IsVisited() const
-{
-	return TileNode != nullptr;
-}
+bool ATile::IsMarked() const {return bMark;}
+
+void ATile::Mark() {bMark = true;}
+
+void ATile::Unmark() {bMark = false;}
 
 // Called when the game starts or when spawned
 void ATile::BeginPlay()

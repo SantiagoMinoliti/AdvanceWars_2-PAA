@@ -21,7 +21,6 @@ void AAW_GameMode::BeginPlay() {
 	
 	IsGameOver = false;
 	MoveCounter = 0;
-	AHumanPlayer* HumanPlayer = Cast<AHumanPlayer>(*TActorIterator<AHumanPlayer>(GetWorld()));
 	if(GameFieldClass != nullptr) {
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
@@ -34,16 +33,60 @@ void AAW_GameMode::BeginPlay() {
 	} else {
 		UE_LOG(LogTemp, Error, TEXT("Game Field Class is null, GameFieldClass: %s"), *GetNameSafe(GameFieldClass));
 	}
-	float CameraPosX = ((GField->TileSize * GField->Size / 2));
-	FVector CameraPos(CameraPosX - 78, CameraPosX, 3370.f);
-	HumanPlayer->SetActorLocationAndRotation(CameraPos, FRotationMatrix::MakeFromX(FVector(0,0,-1)).Rotator());
-
-	Players.Add(HumanPlayer);
-
-	auto* CPUPlayer = GetWorld()->SpawnActor<ARandomPlayer>(FVector(), FRotator());
-	Players.Add(CPUPlayer);
 	
 }
+
+void AAW_GameMode::PostLogin(APlayerController* NewPlayer)
+{
+	Super::PostLogin(NewPlayer);
+
+	// Set up a delayed call to wait until the Pawn is spawned
+	FTimerHandle TimerHandle;
+	GetWorldTimerManager().SetTimer(TimerHandle, [this, NewPlayer]()
+	{
+		if (!IsValid(NewPlayer))
+		{
+			UE_LOG(LogTemp, Error, TEXT("NewPlayer invalid in delayed PostLogin!"));
+			return;
+		}
+
+		AHumanPlayer* HumanPlayer = Cast<AHumanPlayer>(NewPlayer->GetPawn());
+		if (HumanPlayer)
+		{
+			Players.Add(HumanPlayer);
+			UE_LOG(LogTemp, Error, TEXT("Found HumanPlayer after delay: %s"), *GetNameSafe(HumanPlayer));
+
+			// Imposta la posizione della telecamera (già esistente nel tuo codice)
+			float CameraPosX = ((GField->TileSize * GField->Size / 2));
+			FVector CameraPos(CameraPosX, CameraPosX, 3370.f);
+
+			// Imposta la telecamera per guardare dall'alto, lungo l'asse Z negativo
+			FRotator CameraRotation = FRotator(-90.f, 0.f, 0.f); // Guardare direttamente verso il basso
+
+			// Imposta la telecamera come ortografica
+			UCameraComponent* CameraComponent = HumanPlayer->FindComponentByClass<UCameraComponent>();
+			if (CameraComponent)
+			{
+				CameraComponent->SetProjectionMode(ECameraProjectionMode::Orthographic);  // Imposta la proiezione ortografica
+				CameraComponent->SetOrthoWidth(2048.f); // Imposta la larghezza ortografica in base alla tua scena
+			}
+
+			// Imposta la posizione e rotazione dell'attore (la telecamera)
+			HumanPlayer->SetActorLocationAndRotation(CameraPos, CameraRotation);
+
+			auto* CPUPlayer = GetWorld()->SpawnActor<ARandomPlayer>(FVector(), FRotator());
+			Players.Add(CPUPlayer);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("HumanPlayer still not found after delay!"));
+		}
+
+	}, 0.1f, false); // delay 0.1 secondi
+}
+
+
+
 
 void AAW_GameMode::ResetGameMode()
 {

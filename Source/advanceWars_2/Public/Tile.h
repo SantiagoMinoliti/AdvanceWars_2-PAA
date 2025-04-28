@@ -1,7 +1,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "TileNode.h"
 #include "GameFramework/Actor.h"
 #include "Tile.generated.h"
 
@@ -38,11 +37,15 @@ public:
 
 	ATile* Obstacle;
 
-	FTileNode* TileNode;
-
+	bool Visited;
+	bool bMark;
+	
 	TArray<ATile*> GetNeighbors();
 
-	bool IsVisited() const;
+	bool IsMarked() const;
+
+	void Mark();
+	void Unmark();
 
 protected:
 	// Called when the game starts or when spawned

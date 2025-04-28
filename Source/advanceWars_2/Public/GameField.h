@@ -39,9 +39,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Field Config")
 	float TileSize;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Field Config")
-	float ObstacleSpreadness;
-
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ATile> TileClass_Odd;
 
@@ -70,6 +67,12 @@ public:
 	
 	ATile* GetRandomEmptyTile();
 	
+	ATile* GetRandomEmptyUnmarkedTile();
+
+	bool TryPlaceObstacle(ATile* Tile);
+
+	void PlaceObstacle(ATile* Tile);
+	
 	TArray<ATile*> GetReachableTiles(ATile* DepartureTile, int32 TileDistance, bool bIgnoreObstacles);
 
 	
@@ -80,17 +83,5 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-
-private:
-
-	FTileNode* CurrentNode;
-	FTileNode* RootNode;
-	int32 TreeCardinality;
 	
-	ATile* GetRandomTile();
-	bool RandomStep();
-	FTileNode* SelectRandomLeaf();
-    void RandomSink();
-	void PlaceObstacle(ATile* Tile);
 };
