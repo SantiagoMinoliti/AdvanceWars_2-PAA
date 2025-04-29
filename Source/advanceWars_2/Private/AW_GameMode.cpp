@@ -204,12 +204,13 @@ void AAW_GameMode::TurnNextPlayer()
 	Player->OnTurn();
 }
 
-// CONTINUE HERE: Life lowered updates HUD. HumanPlayer OnTurn and OnSetupTurn (if there are 2 characters left to place look in the hud what is CharacterType if "Brawler" or "Sniper" or else and permit to place it if valid
+// CONTINUE HERE: HumanPlayer OnTurn and OnSetupTurn (if there are 2 characters left to place look in the hud what is CharacterType if "Brawler" or "Sniper" or else and permit to place it if valid
 
 void AAW_GameMode::SetupTurnNextPlayer()
 {
 	if (AliveCharacters.Num() == 4)
 	{
+		for(auto* AliveCharacter : AliveCharacters) HUD->SetHealthText(AliveCharacter->GetCharacterId(), AliveCharacter->GetHealth());
 		HUD->SetHealthVisibility(true);
 		HUD->SetCharacterTypeVisibility(false);
 		TurnNextPlayer();
@@ -317,6 +318,7 @@ void AAW_GameMode::InflictDamage(ATile* Tile, float Damage)
 		AliveCharacters.Remove(Char);
 		Char->SelfDestroy();
 	}
+	HUD->SetHealthText(GetCharacterIdByTileStatus(TileStatus), NewHealth);
 	CheckWinConditions();
 }
 
