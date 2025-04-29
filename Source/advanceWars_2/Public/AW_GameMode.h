@@ -5,11 +5,13 @@
 #include "CoreMinimal.h"
 #include "GameField.h"
 #include "GameFramework/GameModeBase.h"
+#include "GameFramework/HUD.h"
 #include "PlayerInterface.h"
 #include "Gamefield.h"
 #include "AW_GameMode.generated.h"
 
 class ABaseCharacter;
+class UAW_HUD;
 
 UENUM()
 enum class ECharacterId : uint32

@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "AW_GameMode.h"
 #include "AW_PlayerController.h"
 #include "BaseCharacter.h"
 #include "HumanPlayer.h"
-#include "RandomPlayer.h"
+#include "GameFramework/HUD.h"
 #include "AW_HUD.h"
+#include "RandomPlayer.h"
 #include "MinimaxPlayer.h"
 #include "EngineUtils.h"
 
@@ -19,19 +19,15 @@ AAW_GameMode::AAW_GameMode() {
 void AAW_GameMode::BeginPlay() {
 	Super::BeginPlay();
 
-	// Assicurati che l'HUD sia correttamente inizializzato
 	HUD = Cast<UAW_HUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	// Assicurati che l'HUD sia correttamente inizializzato
 
 	if (HUD)
 	{
 		// Nascondi le vite dei personaggi
-		HUD->SetHealthVisibility(ECharacterId::Santa, false);
-		HUD->SetHealthVisibility(ECharacterId::Bernard, false);
-		HUD->SetHealthVisibility(ECharacterId::Grinch, false);
-		HUD->SetHealthVisibility(ECharacterId::Max, false);
+		HUD->SetHealthVisibility(false);
 
 		// Rendi visibili il bottone e il testo "Brawler"
-		HUD->SetToggleButtonVisibility(false);
 		HUD->SetCharacterTypeVisibility(false);
 
 		HUD->CharacterType = "Choose Character";  // Imposta direttamente il tipo di personaggio
