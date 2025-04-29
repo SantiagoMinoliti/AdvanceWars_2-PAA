@@ -58,6 +58,13 @@ void AHumanPlayer::OnSetupTurn()
 	HUD->SetCharacterTypeVisibility(true);
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, "Your Turn");
 	//GameInstance->SetTurnMessage(TEXT("Human Turn"));
+
+
+
+
+
+
+
 	HUD->SetCharacterTypeVisibility(false);
 
 }
@@ -66,6 +73,13 @@ void AHumanPlayer::OnTurn() {
 	IsMyTurn = true;
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, "Your Turn");
 	//GameInstance->SetTurnMessage(TEXT("Human Turn"));
+
+
+
+
+
+
+
 }
 
 void AHumanPlayer::OnWin() {

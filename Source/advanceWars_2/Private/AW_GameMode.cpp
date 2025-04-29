@@ -14,6 +14,13 @@ AAW_GameMode::AAW_GameMode() {
 	PlayerControllerClass = AAW_PlayerController::StaticClass();
 	DefaultPawnClass = AHumanPlayer::StaticClass();
 	FieldSize = 25;
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> WBP(TEXT("/Game/Blueprints/BP_HUD.BP_HUD_C"));
+    if (WBP.Succeeded())
+    {
+        HUD1Class = WBP.Class;
+        UE_LOG(LogTemp, Warning, TEXT("Blueprint trovato!"));
+    }
 }
 
 void AAW_GameMode::BeginPlay() {
@@ -52,6 +59,20 @@ void AAW_GameMode::BeginPlay() {
 	} else {
 		UE_LOG(LogTemp, Error, TEXT("Game Field Class is null, GameFieldClass: %s"), *GetNameSafe(GameFieldClass));
 	}
+
+if (HUD1Class)
+{
+    HUDWidget = CreateWidget<UUserWidget>(GetWorld(), HUD1Class);
+    if (HUDWidget)
+    {
+       HUDWidget->AddToViewport();
+       UE_LOG(LogTemp, Warning, TEXT("HUD aggiunta alla viewport"));
+    }
+    else
+    {
+       UE_LOG(LogTemp, Error, TEXT(" Errore: impossibile creare HUDWidget!"));
+    }
+}
 	
 }
 

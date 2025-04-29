@@ -73,6 +73,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<AActor> MaxActor;
 
+	UPROPERTY()
+	UUserWidget* HUDWidget;
+
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSubclassOf<UUserWidget> HUD1Class;
+
 	UAW_HUD* HUD;
 
 	AAW_GameMode();
