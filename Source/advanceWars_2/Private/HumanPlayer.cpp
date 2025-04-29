@@ -7,6 +7,7 @@
 #include "AW_GameMode.h"
 #include "Components/InputComponent.h"
 #include "EnhancedInputComponent.h"
+#include "AW_HUD.h"
 #include "EnhancedInputSubsystems.h"
 
 // Sets default values
@@ -32,6 +33,8 @@ AHumanPlayer::AHumanPlayer()
 void AHumanPlayer::BeginPlay()
 {
 	Super::BeginPlay();
+
+	HUD = Cast<UAW_HUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
 	
 }
 
@@ -52,11 +55,16 @@ void AHumanPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 void AHumanPlayer::OnSetupTurn()
 {
 	IsMyTurn = true;
-	HUD->SetToggleButtonVisibility(true);
 	HUD->SetCharacterTypeVisibility(true);
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, "Your Turn");
 	//GameInstance->SetTurnMessage(TEXT("Human Turn"));
-	HUD->SetToggleButtonVisibility(false);
+
+
+
+
+
+
+
 	HUD->SetCharacterTypeVisibility(false);
 
 }
@@ -65,6 +73,13 @@ void AHumanPlayer::OnTurn() {
 	IsMyTurn = true;
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, "Your Turn");
 	//GameInstance->SetTurnMessage(TEXT("Human Turn"));
+
+
+
+
+
+
+
 }
 
 void AHumanPlayer::OnWin() {

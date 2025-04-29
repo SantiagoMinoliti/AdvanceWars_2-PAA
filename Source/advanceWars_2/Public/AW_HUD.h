@@ -4,6 +4,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
+#include "GameFramework/HUD.h"
 #include "AW_HUD.generated.h"
 
 enum class ECharacterId : uint32;
@@ -35,6 +36,10 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* CharacterTypeTextBlock; // Testo per il tipo di personaggio
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* ToggleCharacterButton; // Testo per il tipo di personaggio
+
 
 	// Variabile per il turno (player o CPU)
 	UPROPERTY()
@@ -75,11 +80,6 @@ protected:
 	virtual void NativeConstruct() override;
 
 private:
-
-
-	// Bottone per togglare il tipo di personaggio
-	UPROPERTY(meta = (BindWidget))
-	UButton* ToggleCharacterButton;
 
 	// Funzione chiamata quando il bottone viene cliccato
 	UFUNCTION()
