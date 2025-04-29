@@ -10,6 +10,8 @@
 #include "PlayerInterface.h"
 #include "HumanPlayer.generated.h"
 
+class UAW_HUD;
+
 UCLASS()
 class ADVANCEWARS_2_API AHumanPlayer : public APawn, public IPlayerInterface
 {
@@ -22,6 +24,8 @@ public:
 	UCameraComponent* Camera;
 
 	UAW_GameInstance* GameInstance;
+
+	UAW_HUD* HUD;
 
 protected:
 	// Called when the game starts or when spawned

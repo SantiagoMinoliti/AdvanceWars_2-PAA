@@ -1,6 +1,7 @@
 #include "AW_HUD.h"
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
+#include "AW_GameMode.h"
 #include "Kismet/GameplayStatics.h"
 
 // Funzione che setta il testo del TurnTextBlock in base al turno corrente
@@ -74,16 +75,16 @@ void UAW_HUD::SetHealthText(ECharacterId CharacterId, int32 Health)
 	// Seleziona il TextBlock giusto in base al CharacterId
 	switch (CharacterId)
 	{
-	case ECharacterId::Santa:
+	case ECharacterId::SANTA:
 		HealthTextBlock = SantaHealthTextBlock;
 		break;
-	case ECharacterId::Bernard:
+	case ECharacterId::BERNARD:
 		HealthTextBlock = BernardHealthTextBlock;
 		break;
-	case ECharacterId::Grinch:
+	case ECharacterId::GRINCH:
 		HealthTextBlock = GrinchHealthTextBlock;
 		break;
-	case ECharacterId::Max:
+	case ECharacterId::MAX:
 		HealthTextBlock = MaxHealthTextBlock;
 		break;
 	default:
@@ -122,11 +123,6 @@ void UAW_HUD::SetCharacterTypeVisibility(bool bIsVisible)
 	{
 		CharacterTypeTextBlock->SetVisibility(bIsVisible ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 	}
-}
-
-// Funzione per gestire la visibilità del bottone Toggle
-void UAW_HUD::SetToggleButtonVisibility(bool bIsVisible)
-{
 	if (ToggleCharacterButton)
 	{
 		ToggleCharacterButton->SetVisibility(bIsVisible ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);

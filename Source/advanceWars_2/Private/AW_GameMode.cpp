@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "AW_GameMode.h"
 #include "AW_PlayerController.h"
 #include "BaseCharacter.h"
 #include "HumanPlayer.h"
-#include "RandomPlayer.h"
+#include "GameFramework/HUD.h"
 #include "AW_HUD.h"
+#include "RandomPlayer.h"
 #include "MinimaxPlayer.h"
 #include "EngineUtils.h"
 
@@ -14,24 +14,27 @@ AAW_GameMode::AAW_GameMode() {
 	PlayerControllerClass = AAW_PlayerController::StaticClass();
 	DefaultPawnClass = AHumanPlayer::StaticClass();
 	FieldSize = 25;
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> WBP(TEXT("/Game/Blueprints/BP_HUD.BP_HUD_C"));
+    if (WBP.Succeeded())
+    {
+        HUD1Class = WBP.Class;
+        UE_LOG(LogTemp, Warning, TEXT("Blueprint trovato!"));
+    }
 }
 
 void AAW_GameMode::BeginPlay() {
 	Super::BeginPlay();
 
-	// Assicurati che l'HUD sia correttamente inizializzato
 	HUD = Cast<UAW_HUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	// Assicurati che l'HUD sia correttamente inizializzato
 
 	if (HUD)
 	{
 		// Nascondi le vite dei personaggi
-		HUD->SetHealthVisibility(ECharacterId::Santa, false);
-		HUD->SetHealthVisibility(ECharacterId::Bernard, false);
-		HUD->SetHealthVisibility(ECharacterId::Grinch, false);
-		HUD->SetHealthVisibility(ECharacterId::Max, false);
+		HUD->SetHealthVisibility(false);
 
 		// Rendi visibili il bottone e il testo "Brawler"
-		HUD->SetToggleButtonVisibility(false);
 		HUD->SetCharacterTypeVisibility(false);
 
 		HUD->CharacterType = "Choose Character";  // Imposta direttamente il tipo di personaggio
@@ -56,6 +59,20 @@ void AAW_GameMode::BeginPlay() {
 	} else {
 		UE_LOG(LogTemp, Error, TEXT("Game Field Class is null, GameFieldClass: %s"), *GetNameSafe(GameFieldClass));
 	}
+
+if (HUD1Class)
+{
+    HUDWidget = CreateWidget<UUserWidget>(GetWorld(), HUD1Class);
+    if (HUDWidget)
+    {
+       HUDWidget->AddToViewport();
+       UE_LOG(LogTemp, Warning, TEXT("HUD aggiunta alla viewport"));
+    }
+    else
+    {
+       UE_LOG(LogTemp, Error, TEXT(" Errore: impossibile creare HUDWidget!"));
+    }
+}
 	
 }
 
